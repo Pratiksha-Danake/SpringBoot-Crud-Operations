@@ -48,4 +48,15 @@ class BookServiceTest {
         List<Book> actual = bookService.getAllBooks();
         assertEquals(expected, actual);
     }
+
+    @Test
+    void shouldDeleteAllBooksFromDatabase() {
+        // arrange
+        String expected = "Deleted All Data";
+        when(bookService.deleteAll()).thenReturn("Deleted All Data");
+
+        // act && assert
+        String actual = bookService.deleteAll();
+        assertEquals(expected, actual);
+    }
 }

@@ -19,4 +19,9 @@ public class BookService {
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
+
+    public String deleteAll() {
+        bookRepository.deleteAll();
+        return "Deleted All Data";
+    }
 }

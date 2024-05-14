@@ -30,4 +30,10 @@ public class BookController {
         List<Book> allBooks = bookService.getAllBooks();
         return ResponseEntity.status(HttpStatus.OK).body(allBooks);
     }
+
+    @DeleteMapping("/deleteAllBooks")
+    public String deleteAllBooks() {
+        bookService.deleteAll();
+        return "Deleted All Data";
+    }
 }

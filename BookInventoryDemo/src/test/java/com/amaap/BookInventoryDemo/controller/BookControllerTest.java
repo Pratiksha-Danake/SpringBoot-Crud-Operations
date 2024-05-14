@@ -45,7 +45,7 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.name").value("Programming In Java"))
                 .andExpect(jsonPath("$.author").value("James Gosling"))
                 .andExpect(jsonPath("$.publication").value("Tech Publication"))
-                .andExpect(jsonPath("$.price").value(500))
+                .andExpect(jsonPath( "$.price").value(500))
                 .andExpect(jsonPath("$.quantity").value(100));
     }
 
@@ -72,5 +72,24 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$[1].publication").value("Info Publication"))
                 .andExpect(jsonPath("$[1].price").value(300))
                 .andExpect(jsonPath("$[1].quantity").value(50));
+    }
+
+    @Test
+    void shouldDeleteAllBookDetailsFromDatabase() throws Exception {
+        // arrange
+        Book book1 = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
+        Book book2 = new Book("Clean Code", "Uncle Bob", "Info Publication", 300, 50);
+        bookService.createBook(book1);
+        bookService.createBook(book2);
+
+        // act
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/deleteAllBooks"))
+                .andExpect(status().isOk());
+
+        // assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/books"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isEmpty());
     }
 }
