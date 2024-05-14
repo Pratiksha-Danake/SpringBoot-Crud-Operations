@@ -148,4 +148,20 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(600))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(200));
     }
+
+    @Test
+    void shouldReturnNotFoundResponseIfBookWithGivenNameDidNotExistToUpdate() throws Exception {
+        // arrange
+        Book existingBook = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
+        Book updatedBook = new Book("Programming In Java", "Pratiksha Danake", "My Publication", 600, 200);
+        when(bookService.updateBookDetails(eq("Programming In Java"), any(Book.class))).thenReturn(null);
+
+        // act & assert
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/updateBook")
+                        .param("name", "Programming In Java")
+                        .param("book", String.valueOf(updatedBook))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedBook)))
+                .andExpect(status().isNotFound());
+    }
 }
