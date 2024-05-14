@@ -71,4 +71,20 @@ class BookServiceTest {
         Book actual = bookService.getBookByName(name);
         assertEquals(expected, actual);
     }
+
+    @Test
+    void shouldUpdateBookDetailsByBookName() {
+        // arrange
+        String name = "Programming In Java";
+        Book existingBook = new Book("Programming In Java", "James Gosling", "Tech Publications", 500, 50);
+        Book updatedBook = new Book("Programming In Java", "Pratiksha Danake", "My Publications", 500, 50);
+
+        when(bookService.updateBookDetails(name, existingBook)).thenReturn(updatedBook);
+
+        // act
+        Book actual = bookService.updateBookDetails(name, existingBook);
+
+        // assert
+        assertEquals(updatedBook, actual);
+    }
 }
