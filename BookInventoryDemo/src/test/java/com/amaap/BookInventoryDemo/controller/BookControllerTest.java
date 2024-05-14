@@ -31,7 +31,6 @@ public class BookControllerTest {
     void shouldCreateABookInDatabase() throws Exception {
         // arrange
         Book book = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
-//        when(bookService.createBook(book)).thenReturn(book);
 
         when(bookService.createBook(any(Book.class))).thenAnswer(invocation -> {
             Book createdBook = invocation.getArgument(0);
