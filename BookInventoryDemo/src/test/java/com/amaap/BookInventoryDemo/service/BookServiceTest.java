@@ -59,4 +59,16 @@ class BookServiceTest {
         String actual = bookService.deleteAll();
         assertEquals(expected, actual);
     }
+
+    @Test
+    void shouldGetBookByNameFromDatabase() {
+        // arrange
+        String name = "Clean Code";
+        Book expected = new Book("Clean Code", "Uncle Bob", "Info Publication", 100, 50);
+        when(bookService.getBookByName(name)).thenReturn(expected);
+
+        // act && assert
+        Book actual = bookService.getBookByName(name);
+        assertEquals(expected, actual);
+    }
 }
