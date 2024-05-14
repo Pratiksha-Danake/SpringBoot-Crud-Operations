@@ -4,17 +4,37 @@ import org.springframework.data.annotation.Id;
 
 public class Book {
     @Id
-    private final String name;
-    private final String author;
-    private final String publication;
-    private final double price;
-    private final int quantity;
+    private String name;
+    private String author;
+    private String publication;
+    private double price;
+    private int quantity;
 
     public Book(String name, String author, String publication, double price, int quantity) {
         this.name = name;
         this.author = author;
         this.publication = publication;
         this.price = price;
+        this.quantity = quantity;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setPublication(String publication) {
+        this.publication = publication;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 

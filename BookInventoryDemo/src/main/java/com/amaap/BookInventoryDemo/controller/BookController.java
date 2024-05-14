@@ -47,4 +47,13 @@ public class BookController {
         else
             return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/updateBook")
+    public ResponseEntity<Book> updateBookDetails(@RequestParam(required = false) String name, @RequestBody Book book) {
+        Book updatedBook = bookService.updateBookDetails(name, book);
+        if (updatedBook != null)
+            return ResponseEntity.ok(updatedBook);
+        else
+            return ResponseEntity.notFound().build();
+    }
 }

@@ -28,4 +28,17 @@ public class BookService {
     public Book getBookByName(String name) {
         return bookRepository.findByName(name);
     }
+
+    public Book updateBookDetails(String name, Book updatedBook) {
+        Book existingBook = bookRepository.findByName(name);
+        System.out.println(existingBook.getAuthor()+" "+existingBook.getName()+" "+existingBook.getQuantity());
+        if (existingBook != null) {
+            existingBook.setAuthor(updatedBook.getAuthor());
+            existingBook.setPublication(updatedBook.getPublication());
+            existingBook.setPrice(updatedBook.getPrice());
+            existingBook.setQuantity(updatedBook.getQuantity());
+            return bookRepository.save(existingBook);
+        }
+        return null;
+    }
 }
