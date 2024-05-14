@@ -36,4 +36,15 @@ public class BookController {
         bookService.deleteAll();
         return "Deleted All Data";
     }
+
+    @GetMapping("/book")
+    public ResponseEntity<Book> getBookByName(@RequestParam(required = false) String name) {
+        if (name == null || name.isEmpty())
+            return ResponseEntity.badRequest().build();
+        Book book = bookService.getBookByName(name);
+        if (book != null)
+            return ResponseEntity.ok(book);
+        else
+            return ResponseEntity.notFound().build();
+    }
 }

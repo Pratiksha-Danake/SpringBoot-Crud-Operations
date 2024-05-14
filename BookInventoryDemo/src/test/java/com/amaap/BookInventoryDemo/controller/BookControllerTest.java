@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,5 +92,23 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void shouldGetBookByNameIfBookPresent() throws Exception {
+        // Arrange
+        Book book = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
+        when(bookService.getBookByName("Programming In Java")).thenReturn(book);
+
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/book")
+                        .param("name", "Programming In Java")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Programming In Java"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value("James Gosling"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.publication").value("Tech Publication"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(500))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(100));
     }
 }

@@ -24,4 +24,8 @@ public class BookService {
         bookRepository.deleteAll();
         return "Deleted All Data";
     }
+
+    public Book getBookByName(String name) {
+        return bookRepository.findByName(name);
+    }
 }
