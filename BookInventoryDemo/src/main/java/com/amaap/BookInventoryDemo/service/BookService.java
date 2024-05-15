@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -25,20 +26,31 @@ public class BookService {
         return "Deleted All Data";
     }
 
-    public Book getBookByName(String name) {
-        return bookRepository.findByName(name);
+    public Optional<Book> getBookByName(String name) {
+        return Optional.ofNullable(bookRepository.findByName(name).orElse(null));
     }
 
-    public Book updateBookDetails(String name, Book updatedBook) {
-        Book existingBook = bookRepository.findByName(name);
-        System.out.println(existingBook.getAuthor()+" "+existingBook.getName()+" "+existingBook.getQuantity());
-        if (existingBook != null) {
-            existingBook.setAuthor(updatedBook.getAuthor());
-            existingBook.setPublication(updatedBook.getPublication());
-            existingBook.setPrice(updatedBook.getPrice());
-            existingBook.setQuantity(updatedBook.getQuantity());
-            return bookRepository.save(existingBook);
+    public Optional<Book> updateBookDetails(String name, Book updatedBook) {
+        return Optional.ofNullable(bookRepository.findByName(name)
+                .map(existingBook -> {
+                    existingBook.setAuthor(updatedBook.getAuthor());
+                    existingBook.setPublication(updatedBook.getPublication());
+                    existingBook.setPrice(updatedBook.getPrice());
+                    existingBook.setQuantity(updatedBook.getQuantity());
+                    return bookRepository.save(existingBook);
+                })
+                .orElse(null));
+    }
+
+    public boolean isBookExist(Book book) {
+        if (book != null && book.getName() != null) {
+            Optional<Book> existingBook = bookRepository.findByName(book.getName());
+            return existingBook.isPresent();
         }
-        return null;
+        return false;
+    }
+
+    public String deleteBookByName(String name) {
+        return bookRepository.deleteByName(name);
     }
 }

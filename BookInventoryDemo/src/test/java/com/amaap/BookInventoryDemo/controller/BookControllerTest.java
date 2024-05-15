@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +53,22 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.publication").value("Tech Publication"))
                 .andExpect(jsonPath("$.price").value(500))
                 .andExpect(jsonPath("$.quantity").value(100));
+    }
+
+    @Test
+    void shouldReturnResponseAsConflictWhenTriesToAddDuplicateBook() throws Exception {
+        // arrange
+        Book existingBook = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
+        when(bookService.isBookExist(any(Book.class))).thenReturn(true);
+
+        // act
+        Book actual = bookService.createBook(existingBook);
+
+        // assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/addBook")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Programming In Java\",\"author\":\"James Gosling\",\"publication\":\"Tech Publication\",\"price\":500,\"quantity\":100}"))
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -99,10 +116,22 @@ public class BookControllerTest {
     }
 
     @Test
+    void shouldDeleteBookByName() throws Exception {
+        // arrange
+        Book book = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
+        when(bookService.deleteBookByName(book.getName())).thenReturn("Deleted Book");
+
+        // act && assert
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/deleteByName")
+                        .param("name", book.getName()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void shouldGetBookByNameIfBookPresent() throws Exception {
         // arrange
         Book book = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
-        when(bookService.getBookByName("Programming In Java")).thenReturn(book);
+        when(bookService.getBookByName("Programming In Java")).thenReturn(Optional.of(book));
 
         // act & assert
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/book")
@@ -133,7 +162,7 @@ public class BookControllerTest {
         // arrange
         Book existingBook = new Book("Programming In Java", "James Gosling", "Tech Publication", 500, 100);
         Book updatedBook = new Book("Programming In Java", "Pratiksha Danake", "My Publication", 600, 200);
-        when(bookService.updateBookDetails(eq("Programming In Java"), any(Book.class))).thenReturn(updatedBook);
+        when(bookService.updateBookDetails(eq("Programming In Java"), any(Book.class))).thenReturn(Optional.of(updatedBook));
 
         // act & assert
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/updateBook")

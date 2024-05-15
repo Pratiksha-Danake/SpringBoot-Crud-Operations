@@ -8,12 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
 public class BookController {
     @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
     public BookController(BookService bookService) {
         this.bookService = bookService;
@@ -21,8 +22,12 @@ public class BookController {
 
     @PostMapping("/addBook")
     public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        Book savedBook = bookService.createBook(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        if (bookService.isBookExist(book))
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        else {
+            Book savedBook = bookService.createBook(book);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        }
     }
 
     @GetMapping("/books")
@@ -37,20 +42,27 @@ public class BookController {
         return "Deleted All Data";
     }
 
+    @DeleteMapping("/deleteByName")
+    public String deleteBookByName(@RequestParam String name) {
+        bookService.deleteBookByName(name);
+        return "Deleted Book";
+    }
+
+
     @GetMapping("/book")
-    public ResponseEntity<Book> getBookByName(@RequestParam(required = false) String name) {
+    public ResponseEntity<Optional<Book>> getBookByName(@RequestParam(required = false) String name) {
         if (name == null || name.isEmpty())
             return ResponseEntity.badRequest().build();
-        Book book = bookService.getBookByName(name);
-        if (book != null)
-            return ResponseEntity.ok(book);
-        else
+        Optional<Book> book = bookService.getBookByName(name);
+        if (book == null)
             return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(book);
     }
 
     @PutMapping("/updateBook")
-    public ResponseEntity<Book> updateBookDetails(@RequestParam(required = false) String name, @RequestBody Book book) {
-        Book updatedBook = bookService.updateBookDetails(name, book);
+    public ResponseEntity<Optional<Book>> updateBookDetails(@RequestParam(required = false) String name, @RequestBody Book book) {
+        Optional<Book> updatedBook = bookService.updateBookDetails(name, book);
         if (updatedBook != null)
             return ResponseEntity.ok(updatedBook);
         else

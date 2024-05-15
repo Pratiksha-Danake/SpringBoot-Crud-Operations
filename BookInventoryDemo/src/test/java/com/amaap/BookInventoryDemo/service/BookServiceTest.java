@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,11 +66,11 @@ class BookServiceTest {
         // arrange
         String name = "Clean Code";
         Book expected = new Book("Clean Code", "Uncle Bob", "Info Publication", 100, 50);
-        when(bookService.getBookByName(name)).thenReturn(expected);
+        when(bookService.getBookByName(name)).thenReturn(Optional.of(expected));
 
         // act && assert
-        Book actual = bookService.getBookByName(name);
-        assertEquals(expected, actual);
+        Optional<Book> actual = bookService.getBookByName(name);
+        assertEquals(Optional.of(expected), actual);
     }
 
     @Test
@@ -79,12 +80,12 @@ class BookServiceTest {
         Book existingBook = new Book("Programming In Java", "James Gosling", "Tech Publications", 500, 50);
         Book updatedBook = new Book("Programming In Java", "Pratiksha Danake", "My Publications", 500, 50);
 
-        when(bookService.updateBookDetails(name, existingBook)).thenReturn(updatedBook);
+        when(bookService.updateBookDetails(name, existingBook)).thenReturn(Optional.of(updatedBook));
 
         // act
-        Book actual = bookService.updateBookDetails(name, existingBook);
+        Optional<Book> actual = bookService.updateBookDetails(name, existingBook);
 
         // assert
-        assertEquals(updatedBook, actual);
+        assertEquals(Optional.of(updatedBook), actual);
     }
 }
